@@ -72,6 +72,7 @@ export default function useUlesteDialoger(fnr: string): number | undefined {
 				setLocalSistOppdatert(new Date());
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sistOppdatert]);
 
 	return antallUleste;
