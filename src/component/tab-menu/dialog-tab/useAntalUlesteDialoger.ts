@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useFetchAntallUlesteDialoger, useFetchSistOppdatert } from '../../../api/api';
+import { fetchSistOppdatert, useFetchAntallUlesteDialoger } from '../../../api/api';
 import { useEventListener } from '../../../util/utils';
 
 export enum UpdateTypes {
@@ -28,10 +28,10 @@ const DIALOG_LEST_EVENT = 'aktivitetsplan.dialog.lest';
 
 export default function useUlesteDialoger(fnr: string): number | undefined {
 	const fetchAntallUlesteDialoger = useFetchAntallUlesteDialoger(fnr, { manual: true });
-	const fetchSistOppdatert = useFetchSistOppdatert(fnr, { manual: true });
 
 	const [antallUleste, setAntallUleste] = useState<number | undefined>(undefined);
 	const [localSistOppdatert, setLocalSistOppdatert] = useState(new Date());
+	const [sistOppdatert, setSistOppdatert] = useState<string | undefined>();
 
 	useEventListener(DIALOG_LEST_EVENT, () => {
 		setAntallUleste(prevState => (prevState ? prevState - 1 : 0));
@@ -39,7 +39,13 @@ export default function useUlesteDialoger(fnr: string): number | undefined {
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
-		interval = setInterval(() => fetchSistOppdatert.fetch().catch(() => clearInterval(interval)), 10000);
+		interval = setInterval(
+			() =>
+				fetchSistOppdatert(fnr)
+					.then(result => setSistOppdatert(result.data.sistOppdatert))
+					.catch(() => clearInterval(interval)),
+			10000
+		);
 		return () => clearInterval(interval);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -57,8 +63,6 @@ export default function useUlesteDialoger(fnr: string): number | undefined {
 	}, [fetchAntallUlesteDialoger.data]);
 
 	useEffect(() => {
-		const sistOppdatert = fetchSistOppdatert.data ? fetchSistOppdatert.data.sistOppdatert : undefined;
-
 		if (sistOppdatert) {
 			const remoteSistOppdatert = new Date(sistOppdatert);
 
@@ -68,8 +72,7 @@ export default function useUlesteDialoger(fnr: string): number | undefined {
 				setLocalSistOppdatert(new Date());
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fetchSistOppdatert.data]);
+	}, [sistOppdatert]);
 
 	return antallUleste;
 }
