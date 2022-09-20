@@ -23,11 +23,8 @@ export interface AuthInfo {
 	securityLevel?: string;
 }
 
-export function useFetchAntallUlesteDialoger(
-	fnr: string,
-	options?: Options
-): UseAxiosResponseValue<AntallUlesteDialoger> {
-	return useAxios<AntallUlesteDialoger>(`/veilarbdialog/api/dialog/antallUleste?fnr=${fnr}`, options);
+export function fetchAntallUlesteDialoger(fnr: string): AxiosPromise<AntallUlesteDialoger> {
+	return axiosInstance.get(`/veilarbdialog/api/dialog/antallUleste?fnr=${fnr}`);
 }
 
 export function fetchSistOppdatert(fnr: string): AxiosPromise<SistOppdatertData> {
