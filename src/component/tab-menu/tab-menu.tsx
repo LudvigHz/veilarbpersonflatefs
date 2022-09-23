@@ -45,12 +45,12 @@ const UlesteDialoger = () => {
 	const { aktivBrukerFnr } = useModiaContextStore();
 	const antallUleste = useUlesteDialoger(aktivBrukerFnr);
 
-	if (!antallUleste) {
+	if (antallUleste === 0 || antallUleste === undefined) {
 		return null;
 	}
 
 	return (
-		<span className="tab__title__notification">
+		<span className={cls('tab__title__notification', { error: !antallUleste })}>
 			{antallUleste}
 			<span className="sr-only"> uleste</span>
 		</span>

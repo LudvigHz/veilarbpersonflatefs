@@ -26,8 +26,8 @@ function windowEvent(update: UpdateTypes) {
 
 const DIALOG_LEST_EVENT = 'aktivitetsplan.dialog.lest';
 
-export default function useUlesteDialoger(fnr: string): number | undefined {
-	const [antallUleste, setAntallUleste] = useState<number | undefined>(undefined);
+export default function useUlesteDialoger(fnr: string): number | undefined | null {
+	const [antallUleste, setAntallUleste] = useState<number | undefined | null>(undefined);
 	const [localSistOppdatert, setLocalSistOppdatert] = useState(new Date());
 	const [sistOppdatert, setSistOppdatert] = useState<string | undefined>();
 
@@ -48,7 +48,9 @@ export default function useUlesteDialoger(fnr: string): number | undefined {
 	}, [fnr]);
 
 	useEffect(() => {
-		fetchAntallUlesteDialoger(fnr).then(result => setAntallUleste(result.data.antallUleste));
+		fetchAntallUlesteDialoger(fnr)
+			.then(result => setAntallUleste(result.data.antallUleste))
+			.catch(() => setAntallUleste(null));
 	}, [fnr, setAntallUleste]);
 
 	useEffect(() => {

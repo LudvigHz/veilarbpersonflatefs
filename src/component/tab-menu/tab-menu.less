@@ -77,6 +77,14 @@
 			margin-left: 0.05rem;
 			top: -8px;
 			position: relative;
+
+			&.error {
+				background-color: @navGra80;
+			}
+			
+			&.error::after {
+				content: "X";
+			}
 		}
 	}
 
